@@ -2,29 +2,24 @@ const express = require('express')
 const app = express()
 const port = 3000
 const path = require('path')
+const users = require('./user')
 
 const basePath = path.join(__dirname,'templates')
 
-var checkAuth = function(req, res, next){
-    req.authStatus = true
-    if(req.authStatus){
-        console.log('Está Logado pode continuar!')
-        next()
-    }else{
-        console.log('Não esta logado, faça login para continuar!')
-    }
-}
+app.use(
+    //encodar abrir pacote URL
+    express.urlencoded({
+        extended: true,
+    })
+)
+app.use(express.json())
 
-app.use(checkAuth)
+app.use(express.static('public'))
+
+app.use('/users', users)
 
 app.get('/', (req, res)=>{
     res.sendFile(`${basePath}/index.html`)
-})
-
-app.get('/user/:id', (req, res)=>{
-    let emailUser = req.params.id + "@gmail.com"
-    console.log(`Parametro de usuario: ${emailUser}`)
-    res.sendFile(`${basePath}/user.html`)
 })
 
 app.listen(port, () => {
